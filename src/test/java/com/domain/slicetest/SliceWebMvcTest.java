@@ -13,9 +13,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -31,16 +31,18 @@ public class SliceWebMvcTest {
     @Test
     public void getVehicleShouldReturnMakeAndModel() throws Exception {
         // Arrange
-        given(productRepository.findByName(anyString()))
-                .willReturn(new Product("test", 20, 100));
+        String username = "dang";
+        given(productRepository.findByName(username))
+                .willReturn(new Product(username, 20, 100));
 
         // Act and Assert
         this.mvc.perform(
                 get("/product")
-                        .param("name", "any")
+                        .param("name", username)
                         .accept(MediaType.APPLICATION_JSON)
         )
+                .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", is("test")));
+                .andExpect(jsonPath("$.name", is(username)));
     }
 }
